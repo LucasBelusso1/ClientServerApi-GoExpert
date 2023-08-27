@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"time"
 
@@ -48,13 +47,13 @@ func getDollarExchange(w http.ResponseWriter, r *http.Request) {
 	req, err := http.NewRequestWithContext(ctx, "GET", "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	defer res.Body.Close()
@@ -62,20 +61,20 @@ func getDollarExchange(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var data DollarExchange
 	err = json.Unmarshal(body, &data)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	err = persistOnDatabase(data)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

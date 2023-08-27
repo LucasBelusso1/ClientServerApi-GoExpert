@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -22,13 +21,13 @@ func main() {
 	req, err := http.NewRequestWithContext(ctx, "GET", "http://localhost:8080/cotacao", nil)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	defer res.Body.Close()
@@ -36,26 +35,26 @@ func main() {
 	body, err := io.ReadAll(res.Body)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var data ValueDollarExchange
 	err = json.Unmarshal(body, &data)
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	file, err := os.OpenFile("cotacao.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	if err != nil {
 		file, err = os.Create("cotacao.txt")
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 	}
 
