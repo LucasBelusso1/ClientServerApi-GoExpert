@@ -14,9 +14,9 @@ import (
 )
 
 type Exchange struct {
-	ID        string
-	Name      string
-	Exchange  string
+	ID       string
+	Name     string
+	Exchange string
 }
 
 type DollarExchange struct {
@@ -41,7 +41,7 @@ func main() {
 }
 
 func getDollarExchange(w http.ResponseWriter, r *http.Request) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond * 200)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*200)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(ctx, "GET", "https://economia.awesomeapi.com.br/json/last/USD-BRL", nil)
@@ -102,10 +102,14 @@ func persistOnDatabase(data DollarExchange) error {
 
 	statement, _ := db.Prepare(`INSERT INTO exchange (id, name, exchangeValue) VALUES (?, ?, ?)`)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*10)
+	context, cancel := context.WithTimeout(context.Background(), time.Millisecond*10)
 	defer cancel()
 
-	statement.ExecContext(ctx, uuid.New(), data.Usdbrl.name, data.Usdbrl.Bid)
+	_, err = statement.ExecContext(context, uuid.New(), data.Usdbrl.name, data.Usdbrl.Bid)
+
+	if err != nil {
+		panic(err)
+	}
 
 	rows, _ := db.Query(`SELECT * FROM exchange`)
 
